@@ -19,6 +19,8 @@
 #define DIJKSTRA__DIJKSTRA_HPP_
 
 #include "rclcpp/rclcpp.hpp"
+#include "nav_msgs/msg/occupancy_grid.hpp"
+#include "nav_msgs/msg/path.hpp"
 
 namespace dijkstra
 {
@@ -37,7 +39,15 @@ public:
     ~Dijkstra();
 
 private:
+    //  接收栅格地图
+    rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_sub_;
+    // 发布规划的路径
+    rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr path_pub_;
+    // 路径规划使用的地图
+    nav_msgs::msg::OccupancyGrid map_;
 
+    // 保存地图
+    void mapSubCallback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
 
 };
 }  // namespace dijkstra

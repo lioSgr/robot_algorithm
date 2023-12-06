@@ -23,12 +23,26 @@ namespace dijkstra
 Dijkstra::Dijkstra()
 : Node("dijkstra")
 {
-    RCLCPP_DEBUG(this->get_logger(), "Construct a new Dijkstra object");
+    RCLCPP_INFO(this->get_logger(), "Construct a new Dijkstra object");
+    using std::placeholders::_1;
+    map_sub_ = this->create_subscription<nav_msgs::msg::OccupancyGrid>(
+        "map",
+        rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable(),
+        std::bind(&Dijkstra::mapSubCallback, this, _1));
 }
 
 Dijkstra::~Dijkstra()
 {
-    RCLCPP_DEBUG(this->get_logger(), "Destroy the Dijkstra object");
+    RCLCPP_INFO(this->get_logger(), "Destroy the Dijkstra object");
 }
+
+void
+Dijkstra::mapSubCallback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
+{
+    map_ = *msg;
+    RCLCPP_INFO(this->get_logger(), "Received new map, %d x %d (%f)", map_.info.width, map_.info.height, map_.info.resolution);
+}
+
+
 
 } // namespace dijkstra
